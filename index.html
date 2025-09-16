@@ -33,7 +33,7 @@
   }
 
   h1, h2 { text-align: center; color: #333; font-family: 'Press Start 2P', cursive; }
-  input, button, textarea { display: block; width: 100%; margin: 10px 0; padding: 12px; border-radius: 12px; border: 1px solid #ccc; font-size: 1rem; box-sizing: border-box; }
+  input, button, textarea, select { display: block; width: 100%; margin: 10px 0; padding: 12px; border-radius: 12px; border: 1px solid #ccc; font-size: 1rem; box-sizing: border-box; }
   button { background-color: #ffcb05; color: #3b4cca; font-weight: bold; border: 2px solid #3b4cca; cursor: pointer; transition: all 0.3s ease; }
   button:hover { background-color: #f5b700; transform: scale(1.05); }
   button:disabled { background-color: #ccc; cursor: not-allowed; }
@@ -196,7 +196,7 @@
     background: var(--card-bg);
     border: 2px solid var(--card-border);
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    min-width: 150px;
+    min-width: 180px;
     text-align: left;
   }
   .bracket-player {
@@ -212,6 +212,21 @@
   }
   .bracket-player.is-loser {
     color: var(--loser-color);
+  }
+  .match-score {
+    text-align: center;
+    font-weight: bold;
+    margin: 4px 0;
+    font-size: 1.1rem;
+  }
+  .games-history {
+    font-size: 0.75rem;
+    border-top: 1px solid var(--bracket-line);
+    margin-top: 5px;
+    padding-top: 5px;
+  }
+  .games-history div {
+    margin-bottom: 2px;
   }
   .bracket-line {
     position: absolute;
@@ -261,6 +276,10 @@
     background: #e0e0e0;
     transform: translateY(-2px);
   }
+  .champ-list-card.featured {
+    border: 2px solid var(--winner-color);
+    box-shadow: 0 6px 12px rgba(255, 203, 5, 0.3);
+  }
   .champ-list-card h4 {
     margin: 0;
     color: #3b4cca;
@@ -304,7 +323,7 @@
     color: #3b4cca;
     border-color: #3b4cca;
   }
-  #ranking-list li, .search-result-item {
+  #ranking-list li, #badge-ranking-list li, .search-result-item {
     background: #f8f9fa;
     padding: 10px;
     margin-bottom: 5px;
@@ -315,9 +334,41 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
   }
-  #ranking-list li:hover, .search-result-item:hover {
+  #ranking-list li:hover, #badge-ranking-list li:hover, .search-result-item:hover {
     background: #e0e0e0;
     transform: translateY(-2px);
+  }
+  .sub-tab-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .sub-tab-buttons button {
+    background-color: #f8f9fa;
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin: 0;
+    border-radius: 0;
+    font-size: 0.9rem;
+    width: auto;
+    flex-grow: 1;
+  }
+  .sub-tab-buttons button:not(:last-child) {
+    border-right: 1px solid #ccc;
+  }
+  .sub-tab-buttons button.active {
+    background-color: #ffcb05;
+    color: #3b4cca;
+    font-weight: bold;
   }
 
   /* Novo layout de perfil */
@@ -408,11 +459,35 @@
     margin-top: 15px;
   }
   .badge-item {
+    position: relative;
     text-align: center;
     font-weight: bold;
     background: #e9ecef;
     padding: 5px 10px;
     border-radius: 8px;
+  }
+  .remove-badge-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff1f1f;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  .remove-badge-btn:hover {
+    background-color: #c0392b;
+    transform: scale(1.1);
   }
 
   .social-links a {
@@ -518,6 +593,92 @@
     padding: 5px 15px 15px 15px;
     border-top: 1px solid #ddd;
   }
+  #badge-selection-list .badge-option {
+    background-color: #f0f0f0;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+    border: 1px solid #ddd;
+  }
+  #badge-selection-list .badge-option:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.03);
+  }
+
+  .user-stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 15px;
+  }
+  .user-stats div {
+    flex: 1;
+  }
+  .user-stats .stat-value {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #3b4cca;
+  }
+  .user-stats .stat-label {
+    font-size: 0.8rem;
+    color: #555;
+  }
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: -10px;
+  }
+  .top-bar h1 {
+    flex-grow: 1;
+    text-align: center;
+    margin: 0;
+  }
+  .top-bar .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .top-bar .controls button {
+      width: auto;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+  }
+  #notification-bell {
+    font-size: 1.2rem; /* Aumenta o sino */
+    cursor: pointer;
+    position: relative;
+    border: none;
+    background: none;
+    color: #333;
+    padding: 5px;
+    width: auto;
+    line-height: 1;
+  }
+  #notification-bell .dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+  }
+  #notification-modal .notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+  #notification-modal .notification-item:last-child {
+    border-bottom: none;
+  }
 
 
   @media (max-width: 600px) {
@@ -525,13 +686,16 @@
       padding: 10px;
       margin: 10px auto;
     }
-    h1 { font-size: 1.5rem; }
-    h2 { font-size: 1.2rem; }
+    h1 { font-size: 1.2rem; }
+    h2 { font-size: 1rem; }
     .tab-buttons { flex-wrap: wrap; }
     .tab-buttons button { font-size: 0.7rem; padding: 8px; }
     .bracket-container { white-space: normal; }
     .bracket-rounds { display: block; }
     .bracket-round { margin-bottom: 20px; }
+    .top-bar h1 {
+        font-size: 1rem;
+    }
   }
 </style>
 </head>
@@ -551,8 +715,14 @@
   </div>
 
   <div id="user-screen" class="hidden">
-    <h1>Bem-vindo, <span id="user-display"></span>!</h1>
-    <button onclick="logout()">Logout</button>
+    <div class="top-bar">
+      <h1>Bem-vindo, <span id="user-display"></span>!</h1>
+      <div class="controls">
+        <button id="notification-bell" onclick="showNotificationModal()">🔔</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+    
 
     <div class="tab-buttons">
       <button onclick="showTab('profile')">Meu Perfil</button>
@@ -577,9 +747,10 @@
                   <div class="progress-bar" id="level-progress-bar"></div>
                 </div>
                 <p>Pontos: <span id="card-points"></span></p>
-                <div id="profile-display-socials"></div>
+                <div class="social-links" id="profile-display-socials"></div>
               </div>
             </div>
+            <div id="my-user-stats" class="user-stats"></div>
             <div class="profile-buttons">
               <button onclick="toggleEditProfile(true)">Editar Perfil</button>
             </div>
@@ -622,6 +793,11 @@
       <textarea id="championship-rules" placeholder="Regras do campeonato"></textarea>
       <input type="date" id="championship-date">
       <input type="number" id="championship-max" placeholder="Máx. participantes">
+      <label for="championship-format">Formato do Torneio:</label>
+      <select id="championship-format">
+          <option value="bo1" selected>Eliminatória Simples (MD1)</option>
+          <option value="bo3">Melhor de 3 (MD3)</option>
+      </select>
       <button onclick="createChampionship()">Criar Campeonato</button>
       <h3>Meus Torneios</h3>
       <div id="my-championships-list-active"></div>
@@ -642,7 +818,20 @@
 
     <div id="leaderboard-tab" class="tab-content hidden">
       <h3>Ranking Global</h3>
-      <ol id="ranking-list"></ol>
+      
+      <div class="sub-tab-buttons">
+        <button id="rank-points-btn" class="active" onclick="showRanking('points')">Por Pontos</button>
+        <button id="rank-badges-btn" onclick="showRanking('badges')">Por Insígnias</button>
+      </div>
+
+      <div id="points-ranking-view">
+          <ol id="ranking-list"></ol>
+      </div>
+
+      <div id="badges-ranking-view" class="hidden">
+          <ol id="badge-ranking-list"></ol>
+      </div>
+
       <div id="user-search-container">
         <h3>Buscar Usuário</h3>
         <input type="text" id="user-search-input" placeholder="Pesquisar por nome ou usuário">
@@ -654,6 +843,10 @@
       <h2>Painel de Administração</h2>
       <h3>Gerenciar Usuários</h3>
       <div id="user-list-admin"></div>
+      <hr>
+      <h3>Enviar Notificação Global</h3>
+      <textarea id="global-notification-message" rows="4" placeholder="Sua mensagem para todos os usuários..."></textarea>
+      <button onclick="sendGlobalNotification()">Enviar para Todos</button>
     </div>
 
     <div id="championship-details-view" class="hidden">
@@ -663,6 +856,7 @@
         <p><strong>Status:</strong> <span id="champ-details-status"></span></p>
         <p><strong>Criador:</strong> <span id="champ-details-owner"></span></p>
         <p><strong>Data:</strong> <span id="champ-details-date"></span></p>
+        <p><strong>Formato:</strong> <span id="champ-details-format"></span></p>
         <p><strong>Regras:</strong> <span id="champ-details-rules"></span></p>
         
         <div class="player-list-container">
@@ -676,6 +870,7 @@
         <button id="join-btn" onclick="">Entrar</button>
         <button id="bracket-btn" onclick="">Sortear Chaveamento</button>
         <button id="delete-btn" onclick="">Excluir</button>
+        <button id="feature-btn" class="hidden" onclick="">Destacar</button>
       </div>
       <div id="championship-bracket-container"></div>
     </div>
@@ -694,6 +889,9 @@
                         <div class="social-links" id="other-user-socials"></div>
                     </div>
                 </div>
+
+                <div class="user-stats" id="other-user-stats"></div>
+
                 <p><strong>Biografia:</strong> <span id="other-user-bio"></span></p>
             </div>
             <div class="profile-section-card">
@@ -703,6 +901,7 @@
             <div class="profile-section-card">
                 <h2>Insígnias de Ginásio</h2>
                 <div class="badge-list" id="other-badges-list"></div>
+                <button id="add-badge-btn" class="hidden" style="margin-top: 20px;">Adicionar Insígnia</button>
             </div>
         </div>
     </div>
@@ -720,11 +919,27 @@
   </div>
 </div>
 
+<div id="badge-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3>Conceder Insígnia</h3>
+    <div id="badge-selection-list"></div>
+    <button onclick="hideBadgeModal()" style="margin-top: 20px; background-color: #f1f1f1; color: #333;">Cancelar</button>
+  </div>
+</div>
+
+<div id="notification-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3>Notificações</h3>
+    <div id="notification-list"></div>
+    <button onclick="hideNotificationModal()" style="margin-top: 20px; background-color: #f1f1f1; color: #333;">Fechar</button>
+  </div>
+</div>
+
 <script type="module">
   // Firebase SDKs
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
   // Configuração do Firebase
   const firebaseConfig = {
@@ -756,6 +971,7 @@
   let previousTab = 'profile';
   let currentUserId = null;
   let allUsersData = {};
+  let viewingUserUid = null;
 
   async function loadAllPokemons() {
     try {
@@ -835,7 +1051,12 @@
             points: 0,
             level: 1,
             isAdmin: isAdmin,
-            badges: []
+            badges: [],
+            wins: 0,
+            losses: 0,
+            tournamentsPlayed: 0,
+            titlesWon: 0,
+            notifications: []
         });
 
         alert("Usuário cadastrado com sucesso!");
@@ -880,6 +1101,8 @@
     } else {
       document.getElementById('admin-tab-btn').classList.add('hidden');
     }
+    
+    checkNotifications();
     await loadProfile();
     showTab('profile');
   }
@@ -902,10 +1125,15 @@
 
     previousTab = tabName;
 
-    if (tabName === 'all-tournaments') loadAllChampionshipsList();
-    else if (tabName === 'my-tournaments') loadMyChampionshipsList();
-    else if (tabName === 'leaderboard') loadLeaderboard();
-    else if (tabName === 'admin-panel') loadAdminPanel();
+    if (tabName === 'all-tournaments') {
+        loadAllChampionshipsList();
+    } else if (tabName === 'my-tournaments') {
+        loadMyChampionshipsList();
+    } else if (tabName === 'leaderboard') {
+        showRanking('points'); 
+    } else if (tabName === 'admin-panel') {
+        loadAdminPanel();
+    }
   }
 
   async function saveProfile(){
@@ -965,6 +1193,22 @@
     document.getElementById('card-points').innerText = user.points || 0;
     document.getElementById('card-level').innerText = user.level || 1;
     
+    const statsDiv = document.getElementById('my-user-stats');
+    statsDiv.innerHTML = `
+      <div>
+        <span class="stat-value">${user.wins || 0}V / ${user.losses || 0}D</span>
+        <span class="stat-label">Vitórias/Derrotas</span>
+      </div>
+      <div>
+        <span class="stat-value">${user.tournamentsPlayed || 0}</span>
+        <span class="stat-label">Torneios</span>
+      </div>
+      <div>
+        <span class="stat-value">${user.titlesWon || 0}</span>
+        <span class="stat-label">Títulos</span>
+      </div>
+    `;
+
     const nextLevelPoints = LEVEL_THRESHOLDS[user.level + 1];
     const currentLevelPoints = LEVEL_THRESHOLDS[user.level] || 0;
     
@@ -1025,14 +1269,16 @@
     const rules=document.getElementById('championship-rules').value.trim();
     const date=document.getElementById('championship-date').value;
     const max=parseInt(document.getElementById('championship-max').value);
+    const format = document.getElementById('championship-format').value;
     if(!name||!rules||!date||!max){alert("Preencha todos os campos!");return;}
     
     const championship={
-      name, rules, date, max,
+      name, rules, date, max, format,
       players: [currentUserId],
       owner: currentUserId,
       rounds:[], status: 'Open', 
-      isGym: user.isAdmin
+      isGym: user.isAdmin,
+      isFeatured: false
     };
     
     await addDoc(collection(db, "championships"), championship);
@@ -1136,14 +1382,34 @@
         return;
       }
 
+      for (const playerId of players) {
+          await updateDoc(doc(db, 'users', playerId), {
+              tournamentsPlayed: increment(1)
+          });
+      }
+
       players.sort(()=>Math.random()-0.5);
       let firstRoundMatches=[];
       while(players.length>=2){
-        firstRoundMatches.push({p1:players.pop(), p2:players.pop(), winner:null, replayLink: null});
+        firstRoundMatches.push({
+            p1:players.pop(), 
+            p2:players.pop(), 
+            winner:null,
+            p1Score: 0,
+            p2Score: 0,
+            games: []
+        });
       }
       if(players.length===1){
         const luckyPlayer = players.pop();
-        firstRoundMatches.push({p1: luckyPlayer, p2: 'BYE', winner: luckyPlayer, replayLink: null});
+        firstRoundMatches.push({
+            p1: luckyPlayer, 
+            p2: 'BYE', 
+            winner: luckyPlayer, 
+            p1Score: c.format === 'bo3' ? 2 : 1, 
+            p2Score: 0, 
+            games: []
+        });
       }
       
       const firstRoundObject = { matches: firstRoundMatches };
@@ -1165,45 +1431,61 @@
 
   async function setWinner(champId, roundIndex, battleIndex, winnerUid, replayLink){
     try {
-        console.log(`Definindo vencedor:`, { champId, roundIndex, battleIndex, winnerUid, replayLink });
-
         const champDocRef = doc(db, 'championships', champId);
         const champDoc = await getDoc(champDocRef);
         if (!champDoc.exists()) throw new Error("Campeonato não encontrado.");
 
         const champ = champDoc.data();
-        
         let battle = champ.rounds[roundIndex].matches[battleIndex];
+        const loserUid = battle.p1 === winnerUid ? battle.p2 : battle.p1;
         
-        battle.winner = winnerUid;
-        battle.replayLink = replayLink || null;
-        
-        const winnerUserDocRef = doc(db, 'users', winnerUid);
+        const game = { winner: winnerUid, replay: replayLink || null };
+        battle.games.push(game);
 
-        if (champ.isGym) {
-            const winnerUserData = (await getDoc(winnerUserDocRef)).data();
-            if (winnerUserData.badges && winnerUserData.badges.length < GYM_BADGES.length) {
-                const nextBadge = GYM_BADGES[winnerUserData.badges.length];
-                await updateDoc(winnerUserDocRef, { badges: arrayUnion(nextBadge) });
-                alert(`Parabéns, ${winnerUserData.profile.name || winnerUserData.username}! Você conquistou a Insígnia ${nextBadge}!`);
-            }
+        if (winnerUid === battle.p1) {
+            battle.p1Score++;
         } else {
-            await updateDoc(winnerUserDocRef, { points: increment(10) });
-            await checkLevelUp(winnerUid);
+            battle.p2Score++;
+        }
+
+        const isMatchOver = (champ.format === 'bo3' && (battle.p1Score === 2 || battle.p2Score === 2)) || (champ.format !== 'bo3' && battle.p1Score + battle.p2Score === 1);
+
+        if (isMatchOver) {
+            battle.winner = winnerUid;
+            
+            await updateDoc(doc(db, 'users', winnerUid), { wins: increment(1) });
+            if (loserUid !== 'BYE') {
+                await updateDoc(doc(db, 'users', loserUid), { losses: increment(1) });
+            }
+
+            if (!champ.isGym) {
+                await updateDoc(doc(db, 'users', winnerUid), { points: increment(10) });
+                await checkLevelUp(winnerUid);
+            }
         }
         
-        if(champ.rounds[roundIndex].matches.every(b => b.winner)){
+        if(isMatchOver && champ.rounds[roundIndex].matches.every(b => b.winner)){
           let winners = champ.rounds[roundIndex].matches.map(b => b.winner);
           if(winners.length > 1){
             let nextRoundMatches = [];
             while(winners.length >= 2){
-              nextRoundMatches.push({p1: winners.shift(), p2: winners.shift(), winner: null, replayLink: null});
+              nextRoundMatches.push({ p1: winners.shift(), p2: winners.shift(), winner: null, p1Score: 0, p2Score: 0, games: [] });
             }
             if (winners.length === 1) {
               const luckyPlayer = winners.shift();
-              nextRoundMatches.push({p1: luckyPlayer, p2: 'BYE', winner: luckyPlayer, replayLink: null});
+              nextRoundMatches.push({ p1: luckyPlayer, p2: 'BYE', winner: luckyPlayer, p1Score: champ.format === 'bo3' ? 2 : 1, p2Score: 0, games: [] });
             }
             champ.rounds.push({ matches: nextRoundMatches });
+            
+            for (const match of nextRoundMatches) {
+              if (match.p1 !== 'BYE' && match.p2 !== 'BYE') {
+                const message1 = `Sua próxima batalha no torneio "${champ.name}" é contra ${allUsersData[match.p2]?.username}.`;
+                const message2 = `Sua próxima batalha no torneio "${champ.name}" é contra ${allUsersData[match.p1]?.username}.`;
+                await sendNotification(match.p1, message1);
+                await sendNotification(match.p2, message2);
+              }
+            }
+
           } else {
             champ.status = 'Finished';
             const finalWinner = winners[0];
@@ -1211,14 +1493,12 @@
             if (!champ.isGym) {
               await updateDoc(doc(db, "users", finalWinner), { points: increment(50) });
             }
+            await updateDoc(doc(db, "users", finalWinner), { titlesWon: increment(1) });
             alert(`O torneio ${champ.name} foi finalizado! O campeão é: ${allUsersData[finalWinner]?.profile.name || allUsersData[finalWinner]?.username}`);
           }
         }
 
         await updateDoc(champDocRef, { rounds: champ.rounds, status: champ.status });
-        
-        console.log("Dados do torneio atualizados com sucesso no Firestore.");
-
         await loadAllUsersData(); 
         await showChampionshipDetails(champId);
         hideWinnerModal();
@@ -1235,7 +1515,7 @@
     currentWinnerUid = winnerUid;
 
     const winnerName = allUsersData[winnerUid]?.profile.name || allUsersData[winnerUid]?.username;
-    document.getElementById('modal-title').innerText = `Confirmar vitória de ${winnerName}`;
+    document.getElementById('modal-title').innerText = `Confirmar Vencedor do Jogo`;
     
     document.getElementById('winner-modal').classList.remove('hidden');
   }
@@ -1295,9 +1575,9 @@
     }
     championships.forEach(c => {
       let li = document.createElement('div');
-      li.className = `champ-list-card ${c.isGym ? 'gym-tournament' : ''}`;
+      li.className = `champ-list-card ${c.isFeatured ? 'featured' : ''}`;
       li.innerHTML = `
-        <h4>${c.name} <span class="status ${c.status.toLowerCase()}">${c.status}</span></h4>
+        <h4>${c.isFeatured ? '⭐' : ''} ${c.name} <span class="status ${c.status.toLowerCase()}">${c.status}</span></h4>
         <p>Criador: ${allUsersData[c.owner]?.profile.name || allUsersData[c.owner]?.username || 'Desconhecido'}</p>
         <p>Jogadores: ${c.players.length}/${c.max}</p>
       `;
@@ -1314,6 +1594,8 @@
     querySnapshot.forEach(doc => {
       allChampionships.push({ id: doc.id, ...doc.data() });
     });
+
+    allChampionships.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
 
     const gymTournamentsActive = allChampionships.filter(c => c.isGym && (c.status === 'Open' || c.status === 'In Progress'));
     const activeTournaments = allChampionships.filter(c => !c.isGym && (c.status === 'Open' || c.status === 'In Progress'));
@@ -1346,25 +1628,12 @@
     showChampionshipsList(finishedList, finishedChamps);
   }
   
-  async function loadLeaderboard(){
-    const q = query(collection(db, "users"));
-    const querySnapshot = await getDocs(q);
-    
-    let allPlayers = [];
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      allPlayers.push({
-        uid: doc.id,
-        username: data.username,
-        points: data.points || 0,
-        level: data.level || 1,
-        profileName: data.profile.name
-      });
-    });
+  async function loadPointsLeaderboard(){
+    let allPlayers = Object.values(allUsersData);
 
     allPlayers.sort((a, b) => {
-      if (b.points !== a.points) return b.points - a.points;
-      return b.level - a.level;
+      if ((b.points || 0) !== (a.points || 0)) return (b.points || 0) - (a.points || 0);
+      return (b.level || 1) - (a.level || 1);
     });
 
     let rankingList = document.getElementById('ranking-list');
@@ -1372,9 +1641,54 @@
     
     allPlayers.slice(0, 10).forEach((player, index) => {
       let li = document.createElement('li');
-      li.innerHTML = `<strong>${index + 1}.</strong> <span class="player-name-link" onclick="showUserProfileDetails('${player.uid}')">${player.profileName || player.username}</span> <span>(Nível ${player.level} - ${player.points} pontos)</span>`;
+      li.innerHTML = `<strong>${index + 1}.</strong> <span class="player-name-link" onclick="showUserProfileDetails('${player.uid}')">${player.profile.name || player.username}</span> <span>(Nível ${player.level || 1} - ${player.points || 0} pontos)</span>`;
       rankingList.appendChild(li);
     });
+  }
+
+  async function loadBadgeLeaderboard() {
+    let allPlayers = Object.values(allUsersData);
+
+    allPlayers.sort((a, b) => {
+      const badgeCountB = b.badges ? b.badges.length : 0;
+      const badgeCountA = a.badges ? a.badges.length : 0;
+
+      if (badgeCountB !== badgeCountA) {
+        return badgeCountB - badgeCountA;
+      }
+      return (b.points || 0) - (a.points || 0);
+    });
+
+    let rankingList = document.getElementById('badge-ranking-list');
+    rankingList.innerHTML = '';
+    
+    allPlayers.slice(0, 10).forEach((player, index) => {
+      const badgeCount = player.badges ? player.badges.length : 0;
+      let li = document.createElement('li');
+      li.innerHTML = `<strong>${index + 1}.</strong> <span class="player-name-link" onclick="showUserProfileDetails('${player.uid}')">${player.profile.name || player.username}</span> <span>(${badgeCount} insígnia${badgeCount !== 1 ? 's' : ''})</span>`;
+      rankingList.appendChild(li);
+    });
+  }
+
+  function showRanking(type) {
+    const pointsView = document.getElementById('points-ranking-view');
+    const badgesView = document.getElementById('badges-ranking-view');
+    const pointsBtn = document.getElementById('rank-points-btn');
+    const badgesBtn = document.getElementById('rank-badges-btn');
+
+    if (type === 'points') {
+      pointsView.classList.remove('hidden');
+      badgesView.classList.add('hidden');
+      pointsBtn.classList.add('active');
+      badgesBtn.classList.remove('active');
+      loadPointsLeaderboard();
+    } else {
+      pointsView.classList.add('hidden');
+      badgesView.classList.remove('hidden');
+      pointsBtn.classList.remove('active');
+      badgesBtn.classList.add('active');
+      loadBadgeLeaderboard();
+    }
   }
 
   function togglePlayerList() {
@@ -1389,6 +1703,21 @@
     } else {
       icon.innerText = '▲';
       icon.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  async function toggleFeatureChampionship(champId, isCurrentlyFeatured) {
+    const featureBtn = document.getElementById('feature-btn');
+    featureBtn.disabled = true;
+    try {
+        await updateDoc(doc(db, 'championships', champId), {
+            isFeatured: !isCurrentlyFeatured
+        });
+        await showChampionshipDetails(champId);
+    } catch(e) {
+        alert('Erro ao destacar torneio.');
+    } finally {
+        featureBtn.disabled = false;
     }
   }
 
@@ -1409,6 +1738,7 @@
     document.getElementById('champ-details-status').innerText = champ.status;
     document.getElementById('champ-details-owner').innerText = allUsersData[champ.owner]?.profile.name || allUsersData[champ.owner]?.username || 'Desconhecido';
     document.getElementById('champ-details-date').innerText = champ.date;
+    document.getElementById('champ-details-format').innerText = champ.format === 'bo3' ? 'Melhor de 3' : 'Eliminatória Simples';
     document.getElementById('champ-details-rules').innerText = champ.rules;
     
     const playersListElement = document.getElementById('champ-details-players');
@@ -1440,6 +1770,7 @@
     const joinBtn = document.getElementById('join-btn');
     const bracketBtn = document.getElementById('bracket-btn');
     const deleteBtn = document.getElementById('delete-btn');
+    const featureBtn = document.getElementById('feature-btn');
     
     joinBtn.disabled = false;
     joinBtn.innerText = 'Entrar';
@@ -1447,6 +1778,7 @@
     joinBtn.classList.add('hidden');
     bracketBtn.classList.add('hidden');
     deleteBtn.classList.add('hidden');
+    featureBtn.classList.add('hidden');
 
     if(isOwner || isAdmin){
       if (champ.status === 'Open') {
@@ -1455,6 +1787,13 @@
       }
       deleteBtn.classList.remove('hidden');
       deleteBtn.onclick = () => deleteChampionship(champId);
+      
+      if(isAdmin) {
+          featureBtn.classList.remove('hidden');
+          featureBtn.innerText = champ.isFeatured ? '⭐ Remover Destaque' : '⭐ Destacar Torneio';
+          featureBtn.onclick = () => toggleFeatureChampionship(champId, champ.isFeatured);
+      }
+
     } else if (!isPlayer && champ.status === 'Open') {
       joinBtn.classList.remove('hidden');
       joinBtn.onclick = () => joinChampionship(champId);
@@ -1491,20 +1830,33 @@
           const canSetWinner = !b.winner && (currentUserId === champ.owner || currentUserId === b.p1 || currentUserId === b.p2);
           const player1Name = allUsersData[b.p1]?.profile.name || allUsersData[b.p1]?.username;
           const player2Name = b.p2 === 'BYE' ? 'BYE' : (allUsersData[b.p2]?.profile.name || allUsersData[b.p2]?.username);
+          
+          let gamesHistoryHtml = '';
+          if (champ.format === 'bo3' && b.games && b.games.length > 0) {
+              gamesHistoryHtml = '<div class="games-history">';
+              b.games.forEach((game, gameIndex) => {
+                  const gameWinnerName = allUsersData[game.winner]?.username;
+                  const replayLink = game.replay ? ` <a href="${game.replay}" target="_blank">(Replay)</a>` : '';
+                  gamesHistoryHtml += `<div>Jogo ${gameIndex + 1}: ${gameWinnerName}${replayLink}</div>`;
+              });
+              gamesHistoryHtml += '</div>';
+          } else if (b.replayLink) {
+             let replayHtml = ` <a href="${b.replayLink}" target="_blank">(Replay)</a>`;
+             gamesHistoryHtml = `<div class="games-history">${replayHtml}</div>`;
+          }
 
-          let replayHtml = b.replayLink ? ` <a href="${b.replayLink}" target="_blank">(Replay)</a>` : '';
           matchupDiv.innerHTML = `
             <div class="bracket-player ${b.winner === b.p1 ? 'is-winner' : (b.winner && b.winner !== b.p1) ? 'is-loser' : ''}">
               <span class="player-name-link" onclick="showUserProfileDetails('${b.p1}')">${player1Name}</span>
               ${canSetWinner ? `<span class="player-btn" onclick="showWinnerModal('${champId}',${i},${idx},'${b.p1}')">Vence</span>` : ''}
-              ${b.winner === b.p1 ? replayHtml : ''}
             </div>
+            ${champ.format === 'bo3' ? `<div class="match-score">${b.p1Score} - ${b.p2Score}</div>` : ''}
             ${ b.p2 !== 'BYE' ? `
             <div class="bracket-player ${b.winner === b.p2 ? 'is-winner' : (b.winner && b.winner !== b.p2) ? 'is-loser' : ''}">
               <span class="player-name-link" onclick="showUserProfileDetails('${b.p2}')">${player2Name}</span>
               ${canSetWinner ? `<span class="player-btn" onclick="showWinnerModal('${champId}',${i},${idx},'${b.p2}')">Vence</span>` : ''}
-              ${b.winner === b.p2 ? replayHtml : ''}
             </div>` : ''}
+            ${gamesHistoryHtml}
           `;
           roundDiv.appendChild(matchupDiv);
         });
@@ -1584,6 +1936,8 @@
   });
 
   async function showUserProfileDetails(uid) {
+    viewingUserUid = uid;
+
     const user = allUsersData[uid];
     if (!user) {
         console.error("Usuário não encontrado no cache.");
@@ -1614,6 +1968,22 @@
         socialsDiv.appendChild(discordP);
     }
 
+    const statsDiv = document.getElementById('other-user-stats');
+    statsDiv.innerHTML = `
+      <div>
+        <span class="stat-value">${user.wins || 0}V / ${user.losses || 0}D</span>
+        <span class="stat-label">Vitórias/Derrotas</span>
+      </div>
+      <div>
+        <span class="stat-value">${user.tournamentsPlayed || 0}</span>
+        <span class="stat-label">Torneios</span>
+      </div>
+      <div>
+        <span class="stat-value">${user.titlesWon || 0}</span>
+        <span class="stat-label">Títulos</span>
+      </div>
+    `;
+
     const pokemonsContainer = document.getElementById('other-user-card-pokemons');
     pokemonsContainer.innerHTML = (user.profile.pokemons || []).map(p=>`
         <div class="pokemon-box">
@@ -1623,15 +1993,195 @@
     
     const badgesContainer = document.getElementById('other-badges-list');
     badgesContainer.innerHTML = '';
+    const currentUser = allUsersData[currentUserId];
+    const isAdmin = currentUser && currentUser.isAdmin;
+
     if(user.badges && user.badges.length > 0) {
         user.badges.forEach(badgeName => {
             const badgeDiv = document.createElement('div');
             badgeDiv.className = 'badge-item';
             badgeDiv.innerHTML = `🏆 ${badgeName}`;
+
+            if(isAdmin) {
+              const removeBtn = document.createElement('button');
+              removeBtn.className = 'remove-badge-btn';
+              removeBtn.innerHTML = 'ⓧ';
+              removeBtn.title = `Remover insígnia ${badgeName}`;
+              removeBtn.onclick = () => removeBadgeFromUser(badgeName);
+              badgeDiv.appendChild(removeBtn);
+            }
+
             badgesContainer.appendChild(badgeDiv);
         });
     }
+
+    const addBadgeBtn = document.getElementById('add-badge-btn');
+    if (isAdmin) {
+      addBadgeBtn.classList.remove('hidden');
+      addBadgeBtn.onclick = () => showBadgeModal();
+    } else {
+      addBadgeBtn.classList.add('hidden');
+    }
   }
+
+  function showBadgeModal() {
+    const targetUser = allUsersData[viewingUserUid];
+    if (!targetUser) return;
+
+    const ownedBadges = targetUser.badges || [];
+    const availableBadges = GYM_BADGES.filter(b => !ownedBadges.includes(b));
+    
+    const badgeListDiv = document.getElementById('badge-selection-list');
+    badgeListDiv.innerHTML = '';
+
+    if (availableBadges.length === 0) {
+      badgeListDiv.innerHTML = '<p>Este jogador já possui todas as insígnias!</p>';
+    } else {
+      availableBadges.forEach(badgeName => {
+        const badgeDiv = document.createElement('div');
+        badgeDiv.className = 'badge-option';
+        badgeDiv.innerText = `🏆 ${badgeName}`;
+        badgeDiv.onclick = () => addBadgeToUser(badgeName);
+        badgeListDiv.appendChild(badgeDiv);
+      });
+    }
+
+    document.getElementById('badge-modal').classList.remove('hidden');
+  }
+
+  function hideBadgeModal() {
+    document.getElementById('badge-modal').classList.add('hidden');
+  }
+
+  async function addBadgeToUser(badgeName) {
+    if (!viewingUserUid) return;
+    try {
+      const userDocRef = doc(db, 'users', viewingUserUid);
+      await updateDoc(userDocRef, {
+        badges: arrayUnion(badgeName)
+      });
+      
+      hideBadgeModal();
+      await loadAllUsersData();
+      await showUserProfileDetails(viewingUserUid);
+    } catch (error) {
+      console.error("Erro ao adicionar insígnia:", error);
+      alert("Ocorreu um erro ao adicionar a insígnia.");
+    }
+  }
+
+  async function removeBadgeFromUser(badgeName) {
+    if (!viewingUserUid) return;
+    const targetUser = allUsersData[viewingUserUid];
+    const playerName = targetUser.profile.name || targetUser.username;
+    if (confirm(`Tem certeza que deseja remover a insígnia "${badgeName}" de ${playerName}?`)) {
+      try {
+        const userDocRef = doc(db, 'users', viewingUserUid);
+        await updateDoc(userDocRef, {
+          badges: arrayRemove(badgeName)
+        });
+        await loadAllUsersData();
+        await showUserProfileDetails(viewingUserUid);
+      } catch (error) {
+        console.error("Erro ao remover insígnia:", error);
+        alert("Ocorreu um erro ao remover a insígnia.");
+      }
+    }
+  }
+  
+  async function checkNotifications() {
+      const user = allUsersData[currentUserId];
+      if (user && user.notifications) {
+          const unread = user.notifications.filter(n => !n.read);
+          const bell = document.getElementById('notification-bell');
+          if (unread.length > 0) {
+              if (!bell.querySelector('.dot')) {
+                  const dot = document.createElement('div');
+                  dot.className = 'dot';
+                  bell.appendChild(dot);
+              }
+          } else {
+              if (bell.querySelector('.dot')) {
+                  bell.querySelector('.dot').remove();
+              }
+          }
+      }
+  }
+
+  async function showNotificationModal() {
+      const user = allUsersData[currentUserId];
+      const notificationList = document.getElementById('notification-list');
+      notificationList.innerHTML = '';
+
+      if (!user || !user.notifications || user.notifications.length === 0) {
+          notificationList.innerHTML = '<p>Nenhuma notificação.</p>';
+      } else {
+          const sortedNotifications = [...user.notifications].sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
+          
+          sortedNotifications.forEach(notif => {
+              const item = document.createElement('div');
+              item.className = 'notification-item';
+              item.innerText = notif.message;
+              notificationList.appendChild(item);
+          });
+
+          const readNotifications = user.notifications.map(n => ({...n, read: true}));
+          await updateDoc(doc(db, 'users', currentUserId), {
+              notifications: readNotifications
+          });
+          await loadAllUsersData(); // Recarrega os dados do usuário para o cache
+          checkNotifications(); // Remove o ponto vermelho
+      }
+      
+      document.getElementById('notification-modal').classList.remove('hidden');
+  }
+
+  function hideNotificationModal() {
+      document.getElementById('notification-modal').classList.add('hidden');
+  }
+
+  async function sendNotification(targetUid, message) {
+      if (!targetUid) return;
+      const userDocRef = doc(db, 'users', targetUid);
+      const notification = {
+          message: message,
+          read: false,
+          timestamp: new Date()
+      };
+      await updateDoc(userDocRef, {
+          notifications: arrayUnion(notification)
+      });
+  }
+
+  async function sendGlobalNotification() {
+    const message = document.getElementById('global-notification-message').value.trim();
+    if (!message) {
+      alert("A mensagem não pode estar vazia.");
+      return;
+    }
+
+    if (confirm(`Tem certeza que deseja enviar a seguinte mensagem para TODOS os usuários?\n\n"${message}"`)) {
+      const sendButton = document.querySelector('#admin-panel-tab button[onclick="sendGlobalNotification()"]');
+      sendButton.disabled = true;
+      sendButton.innerText = 'Enviando...';
+
+      try {
+        const allUserIds = Object.keys(allUsersData);
+        const notificationPromises = allUserIds.map(uid => sendNotification(uid, message));
+        await Promise.all(notificationPromises);
+        
+        alert(`Notificação enviada com sucesso para ${allUserIds.length} usuários.`);
+        document.getElementById('global-notification-message').value = '';
+      } catch (error) {
+        console.error("Erro ao enviar notificação global:", error);
+        alert("Ocorreu um erro ao enviar as notificações.");
+      } finally {
+        sendButton.disabled = false;
+        sendButton.innerText = 'Enviar para Todos';
+      }
+    }
+  }
+
 
   // --- INICIALIZAÇÃO ---
   onAuthStateChanged(auth, async (user) => {
@@ -1671,6 +2221,15 @@
   window.removePlayerFromChampionship = removePlayerFromChampionship;
   window.showUserProfileDetails = showUserProfileDetails;
   window.goBackFromProfile = goBackFromProfile;
+  window.showBadgeModal = showBadgeModal;
+  window.hideBadgeModal = hideBadgeModal;
+  window.addBadgeToUser = addBadgeToUser;
+  window.removeBadgeFromUser = removeBadgeFromUser;
+  window.showRanking = showRanking;
+  window.showNotificationModal = showNotificationModal;
+  window.hideNotificationModal = hideNotificationModal;
+  window.toggleFeatureChampionship = toggleFeatureChampionship;
+  window.sendGlobalNotification = sendGlobalNotification;
 </script>
 </body>
 
