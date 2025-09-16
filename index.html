@@ -461,6 +461,64 @@
     margin-top: 10px;
   }
 
+  /* Estilo para a nova lista de jogadores e botão de remover */
+  #champ-details-players ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+  }
+  #champ-details-players li {
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .remove-player-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    padding: 0;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .remove-player-btn:hover {
+    background-color: #c0392b;
+  }
+  .player-list-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .player-list-header {
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+  }
+  .player-list-header:hover {
+    background-color: #e0e0e0;
+  }
+  #player-list-toggle-icon {
+    transition: transform 0.2s ease-in-out;
+  }
+  #champ-details-players {
+    padding: 5px 15px 15px 15px;
+    border-top: 1px solid #ddd;
+  }
+
 
   @media (max-width: 600px) {
     .container {
@@ -606,7 +664,15 @@
         <p><strong>Criador:</strong> <span id="champ-details-owner"></span></p>
         <p><strong>Data:</strong> <span id="champ-details-date"></span></p>
         <p><strong>Regras:</strong> <span id="champ-details-rules"></span></p>
-        <p><strong>Jogadores:</strong> <span id="champ-details-players"></span> (<span id="champ-details-count"></span>/<span id="champ-details-max"></span>)</p>
+        
+        <div class="player-list-container">
+            <div class="player-list-header" onclick="togglePlayerList()">
+                <strong>Jogadores (<span id="champ-details-count"></span>/<span id="champ-details-max"></span>)</strong>
+                <span id="player-list-toggle-icon">▼</span>
+            </div>
+            <div id="champ-details-players" class="hidden"></div>
+        </div>
+
         <button id="join-btn" onclick="">Entrar</button>
         <button id="bracket-btn" onclick="">Sortear Chaveamento</button>
         <button id="delete-btn" onclick="">Excluir</button>
@@ -975,6 +1041,22 @@
     showTab('all-tournaments');
   }
 
+  async function removePlayerFromChampionship(champId, playerUid, playerName) {
+    if (confirm(`Tem certeza que deseja remover o jogador "${playerName}" do torneio?`)) {
+      try {
+        const champDocRef = doc(db, 'championships', champId);
+        await updateDoc(champDocRef, {
+          players: arrayRemove(playerUid)
+        });
+        console.log(`Jogador ${playerName} removido com sucesso.`);
+        await showChampionshipDetails(champId);
+      } catch (error) {
+        console.error("Erro ao remover jogador:", error);
+        alert("Não foi possível remover o jogador. Verifique o console para mais detalhes.");
+      }
+    }
+  }
+
   async function joinChampionship(champId){
     if(!currentUserId) return;
     
@@ -1083,8 +1165,12 @@
 
   async function setWinner(champId, roundIndex, battleIndex, winnerUid, replayLink){
     try {
+        console.log(`Definindo vencedor:`, { champId, roundIndex, battleIndex, winnerUid, replayLink });
+
         const champDocRef = doc(db, 'championships', champId);
         const champDoc = await getDoc(champDocRef);
+        if (!champDoc.exists()) throw new Error("Campeonato não encontrado.");
+
         const champ = champDoc.data();
         
         let battle = champ.rounds[roundIndex].matches[battleIndex];
@@ -1094,7 +1180,14 @@
         
         const winnerUserDocRef = doc(db, 'users', winnerUid);
 
-        if (!champ.isGym) {
+        if (champ.isGym) {
+            const winnerUserData = (await getDoc(winnerUserDocRef)).data();
+            if (winnerUserData.badges && winnerUserData.badges.length < GYM_BADGES.length) {
+                const nextBadge = GYM_BADGES[winnerUserData.badges.length];
+                await updateDoc(winnerUserDocRef, { badges: arrayUnion(nextBadge) });
+                alert(`Parabéns, ${winnerUserData.profile.name || winnerUserData.username}! Você conquistou a Insígnia ${nextBadge}!`);
+            }
+        } else {
             await updateDoc(winnerUserDocRef, { points: increment(10) });
             await checkLevelUp(winnerUid);
         }
@@ -1123,6 +1216,9 @@
         }
 
         await updateDoc(champDocRef, { rounds: champ.rounds, status: champ.status });
+        
+        console.log("Dados do torneio atualizados com sucesso no Firestore.");
+
         await loadAllUsersData(); 
         await showChampionshipDetails(champId);
         hideWinnerModal();
@@ -1281,7 +1377,25 @@
     });
   }
 
+  function togglePlayerList() {
+    const playerList = document.getElementById('champ-details-players');
+    const icon = document.getElementById('player-list-toggle-icon');
+    
+    const isHidden = playerList.classList.toggle('hidden');
+    
+    if (isHidden) {
+      icon.innerText = '▼';
+      icon.style.transform = 'rotate(0deg)';
+    } else {
+      icon.innerText = '▲';
+      icon.style.transform = 'rotate(180deg)';
+    }
+  }
+
   async function showChampionshipDetails(champId){
+    document.getElementById('champ-details-players').classList.add('hidden');
+    document.getElementById('player-list-toggle-icon').innerText = '▼';
+
     const views = document.querySelectorAll('.tab-content, #user-profile-details-view');
     views.forEach(view => view.classList.add('hidden'));
     document.getElementById('championship-details-view').classList.remove('hidden');
@@ -1296,13 +1410,31 @@
     document.getElementById('champ-details-owner').innerText = allUsersData[champ.owner]?.profile.name || allUsersData[champ.owner]?.username || 'Desconhecido';
     document.getElementById('champ-details-date').innerText = champ.date;
     document.getElementById('champ-details-rules').innerText = champ.rules;
-    document.getElementById('champ-details-players').innerText = champ.players.map(uid => allUsersData[uid]?.profile.name || allUsersData[uid]?.username).join(', ');
-    document.getElementById('champ-details-count').innerText = champ.players.length;
-    document.getElementById('champ-details-max').innerText = champ.max;
-
+    
+    const playersListElement = document.getElementById('champ-details-players');
+    playersListElement.innerHTML = ''; 
+    
     const user = allUsersData[currentUserId];
     const isOwner = currentUserId === champ.owner;
     const isAdmin = user && user.isAdmin;
+    
+    let playersHtml = '<ul>';
+    champ.players.forEach(playerUid => {
+      const playerName = allUsersData[playerUid]?.profile.name || allUsersData[playerUid]?.username || 'Carregando...';
+      let removeButtonHtml = '';
+      
+      if ((isOwner || isAdmin) && currentUserId !== playerUid && champ.status === 'Open') {
+        removeButtonHtml = `<button class="remove-player-btn" onclick="removePlayerFromChampionship('${champId}', '${playerUid}', '${playerName}')" title="Remover ${playerName}">ⓧ</button>`;
+      }
+      
+      playersHtml += `<li><span>${playerName}</span> ${removeButtonHtml}</li>`;
+    });
+    playersHtml += '</ul>';
+    playersListElement.innerHTML = playersHtml;
+
+    document.getElementById('champ-details-count').innerText = champ.players.length;
+    document.getElementById('champ-details-max').innerText = champ.max;
+
     const isPlayer = champ.players.includes(currentUserId);
 
     const joinBtn = document.getElementById('join-btn');
@@ -1535,10 +1667,11 @@
   window.banUser = banUser;
   window.showChampionshipDetails = showChampionshipDetails;
   window.goBackToList = goBackToList;
+  window.togglePlayerList = togglePlayerList;
+  window.removePlayerFromChampionship = removePlayerFromChampionship;
   window.showUserProfileDetails = showUserProfileDetails;
   window.goBackFromProfile = goBackFromProfile;
 </script>
 </body>
 
 </html>
-
